@@ -7,41 +7,46 @@
 <body>
     <div id="player"></div>
     <script>
+var url1 = "https://dc.vipstreams.in/ufc/index.m3u8";
+var url2 = "https://fs.fscdn.fun/ufc/index.m3u8";
 
-                $(function () {
+$(function () {
     var player = new Clappr.Player({
-                    source: "https://fs.fscdn.fun/ufc/index.m3u8",
-                    parentId: "#player",
-                    playback: {
-                        hlsjsConfig: {
-                            retryFailedSegments: false,
-                            maxBufferSize: 0,
-                            // Highly recommended setting in live mode
-                            xhrSetup: function(xhr, url) {
-                                xhr.timeout = 6500;
-                                // Set your desired timeout value in milliseconds
-                            },
-                            maxBufferLength: 5,
-                            // Highly recommended setting in live mode
-                            liveSyncDurationCount: 3,
-                            // Highly recommended setting in live mode
-                        }
-                    },
-                    disableErrorScreen: false,
-                    disableKeyboardShortcuts: true,
-                    disableVideoTagContextMenu: false,
-                    hlsRecoverAttempts: 4,
-                    retryFailedSegments: false,
-                    mediacontrol: {
-                        seekbar: "#0053EF",
-                        buttons: "#FAFAFA"
-                    },
-                    autoPlay: false,
-                    baseUrl: 'http://cdn.clappr.io/latest',
-                    poster: './Untitled.png',
-                    width: '100vw',
-                    height: '100vh',
-                });
+        source: url1, // Start with the first URL
+        parentId: "#player",
+        playback: {
+            hlsjsConfig: {
+                retryFailedSegments: false,
+                maxBufferSize: 0,
+                xhrSetup: function(xhr, url) {
+                    xhr.timeout = 6500;
+                },
+                maxBufferLength: 5,
+                liveSyncDurationCount: 3,
+            }
+        },
+        disableErrorScreen: false,
+        disableKeyboardShortcuts: true,
+        disableVideoTagContextMenu: false,
+        hlsRecoverAttempts: 4,
+        retryFailedSegments: false,
+        mediacontrol: {
+            seekbar: "#0053EF",
+            buttons: "#FAFAFA"
+        },
+        autoPlay: false,
+        baseUrl: 'http://cdn.clappr.io/latest',
+        poster: './Untitled.png',
+        width: '100vw',
+        height: '100vh',
+    });
+
+    // Listen for errors and switch to the second URL if the first one fails
+    player.on(Clappr.Events.PLAYER_ERROR, function() {
+        console.log("URL1 failed, switching to URL2");
+        player.load(url2);
+    });
 });
+
     </script>
   </body>
