@@ -1,0 +1,47 @@
+<head>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js">
+    </script>
+  </head>
+
+<body>
+    <div id="player"></div>
+    <script>
+
+                $(function () {
+    var player = new Clappr.Player({
+                    source: "https://fs.fscdn.fun/ufc/index.m3u8",
+                    parentId: "#player",
+                    playback: {
+                        hlsjsConfig: {
+                            retryFailedSegments: false,
+                            maxBufferSize: 0,
+                            // Highly recommended setting in live mode
+                            xhrSetup: function(xhr, url) {
+                                xhr.timeout = 6500;
+                                // Set your desired timeout value in milliseconds
+                            },
+                            maxBufferLength: 5,
+                            // Highly recommended setting in live mode
+                            liveSyncDurationCount: 3,
+                            // Highly recommended setting in live mode
+                        }
+                    },
+                    disableErrorScreen: false,
+                    disableKeyboardShortcuts: true,
+                    disableVideoTagContextMenu: false,
+                    hlsRecoverAttempts: 4,
+                    retryFailedSegments: false,
+                    mediacontrol: {
+                        seekbar: "#0053EF",
+                        buttons: "#FAFAFA"
+                    },
+                    autoPlay: false,
+                    baseUrl: 'http://cdn.clappr.io/latest',
+                    poster: './Untitled.png',
+                    width: '100vw',
+                    height: '100vh',
+                });
+});
+    </script>
+  </body>
