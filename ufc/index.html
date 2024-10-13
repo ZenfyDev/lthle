@@ -6,47 +6,55 @@
 
 <body>
     <div id="player"></div>
-    <script>
-var url1 = "https://dc.vipstreams.in/ufc/index.m3u8";
-var url2 = "https://fs.fscdn.fun/ufc/index.m3u8";
-
-$(function () {
-    var player = new Clappr.Player({
-        source: url1, // Start with the first URL
-        parentId: "#player",
-        playback: {
-            hlsjsConfig: {
-                retryFailedSegments: false,
-                maxBufferSize: 0,
-                xhrSetup: function(xhr, url) {
-                    xhr.timeout = 6500;
+    <script>var url1 = "https://dc.vipstreams.in/ufc/index.m3u8";
+        var url2 = "https://fs.fscdn.fun/ufc/index.m3u8";
+        var url3 = "https://fs.nigga.cash/tnt1/index.m3u8";
+        var urls = [url1, url2, url3];
+        var currentUrlIndex = 0; // Keeps track of the current URL
+        
+        $(function () {
+            var player = new Clappr.Player({
+                source: urls[currentUrlIndex], // Start with the first URL
+                parentId: "#player",
+                playback: {
+                    hlsjsConfig: {
+                        retryFailedSegments: false,
+                        maxBufferSize: 0,
+                        xhrSetup: function(xhr, url) {
+                            xhr.timeout = 6500;
+                        },
+                        maxBufferLength: 5,
+                        liveSyncDurationCount: 3,
+                    }
                 },
-                maxBufferLength: 5,
-                liveSyncDurationCount: 3,
-            }
-        },
-        disableErrorScreen: false,
-        disableKeyboardShortcuts: true,
-        disableVideoTagContextMenu: false,
-        hlsRecoverAttempts: 4,
-        retryFailedSegments: false,
-        mediacontrol: {
-            seekbar: "#0053EF",
-            buttons: "#FAFAFA"
-        },
-        autoPlay: false,
-        baseUrl: 'http://cdn.clappr.io/latest',
-        poster: './Untitled.png',
-        width: '100vw',
-        height: '100vh',
-    });
-
-    // Listen for errors and switch to the second URL if the first one fails
-    player.on(Clappr.Events.PLAYER_ERROR, function() {
-        console.log("URL1 failed, switching to URL2");
-        player.load(url2);
-    });
-});
+                disableErrorScreen: false,
+                disableKeyboardShortcuts: true,
+                disableVideoTagContextMenu: false,
+                hlsRecoverAttempts: 4,
+                retryFailedSegments: false,
+                mediacontrol: {
+                    seekbar: "#0053EF",
+                    buttons: "#FAFAFA"
+                },
+                autoPlay: false,
+                baseUrl: 'http://cdn.clappr.io/latest',
+                poster: './Untitled.png',
+                width: '100vw',
+                height: '100vh',
+            });
+        
+            // Listen for errors and switch URLs if the current one fails
+            player.on(Clappr.Events.PLAYER_ERROR, function() {
+                if (currentUrlIndex < urls.length - 1) {
+                    currentUrlIndex++; // Move to the next URL
+                    console.log(`URL${currentUrlIndex} failed, switching to URL${currentUrlIndex + 1}`);
+                    player.load(urls[currentUrlIndex]); // Load the next URL
+                } else {
+                    console.log("All URLs failed.");
+                }
+            });
+        });
+        
 
     </script>
   </body>
