@@ -1,60 +1,29 @@
 <head>
-    <script type="text/javascript"
-        src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js">
-    </script>
-  </head>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+    <style>
+        /* CSS styles for buttons */
+        #nextSourceButton, #nextSourceButton2 {
+            position: absolute;
+            top: 20px;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            z-index: 10;
+        }
+        #nextSourceButton { right: 20px; background-color: #0053EF; }
+        #nextSourceButton:hover { background-color: #003bbf; transform: scale(1.05); }
+        #nextSourceButton2 { left: 20px; background-color: #001131; }
+    </style>
+</head>
 
 <body>
-    <div id="player"></div>
-    <script>var url1 = "https://fs.qwertyisaddictedtodxm.pw/ufc/index.m3u8";
-        var url2 = "https://fs.fscdn.fun/ufc/index.m3u8";
-        var url3 = "https://fs.nigga.cash/tnt1/index.m3u8";
-        var urls = [url1, url2, url3];
-        var currentUrlIndex = 0; // Keeps track of the current URL
-        
-        $(function () {
-            var player = new Clappr.Player({
-                source: urls[currentUrlIndex], // Start with the first URL
-                parentId: "#player",
-                playback: {
-                    hlsjsConfig: {
-                        retryFailedSegments: false,
-                        maxBufferSize: 0,
-                        xhrSetup: function(xhr, url) {
-                            xhr.timeout = 6500;
-                        },
-                        maxBufferLength: 5,
-                        liveSyncDurationCount: 3,
-                    }
-                },
-                disableErrorScreen: false,
-                disableKeyboardShortcuts: true,
-                disableVideoTagContextMenu: false,
-                hlsRecoverAttempts: 4,
-                retryFailedSegments: false,
-                mediacontrol: {
-                    seekbar: "#0053EF",
-                    buttons: "#FAFAFA"
-                },
-                autoPlay: false,
-                baseUrl: 'http://cdn.clappr.io/latest',
-                poster: './Untitled.png',
-                width: '100vw',
-                height: '100vh',
-            });
-        
-            // Listen for errors and switch URLs if the current one fails
-            player.on(Clappr.Events.PLAYER_ERROR, function() {
-                if (currentUrlIndex < urls.length - 1) {
-                    currentUrlIndex++; // Move to the next URL
-                    console.log(`URL${currentUrlIndex} failed, switching to URL${currentUrlIndex + 1}`);
-                    player.load(urls[currentUrlIndex]); // Load the next URL
-                } else {
-                    console.log("All URLs failed.");
-                }
-            });
-        });
-        
-
-    </script>
-  </body>
+    <div id="player" style="position: relative;"></div>
+    <button id="nextSourceButton">Next Source</button>
+    <button id="nextSourceButton2">LTHLE STREAM</button>
+    <script src="clap.js"></script>
+</body>
