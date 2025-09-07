@@ -136,8 +136,9 @@ let streamurl = "https://nflwebcast.com/live/";
 function hello(name){
   const lowerCaseName = name.toLowerCase(); 
   var gron = streamurl + lowerCaseName +".html";
-  openWebsite(gron);
-  console.log(gron);
+  var final = "https://bg.kardna.net/uv.html#" + gron;
+  openWebsite(final);
+  console.log(final);
 }
 
 // Function to update time left for each game
