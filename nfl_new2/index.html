@@ -20,14 +20,6 @@
         <div class="row" style="justify-content:space-between;">
           <div>
             <div class="muted" style="margin-bottom:6px;">Quick launch</div>
-<div class="row" style="gap:8px; margin:8px 0;">
-  <label for="team-select" class="muted" style="min-width:70px;">Teams</label>
-  <select id="team-select" class="btn small" style="flex:1;"></select>
-  <div id="team-dropdown" class="row" style="gap:6px;">
-    <button class="btn small" id="team-open-btn">Open</button>
-    <button class="btn small primary" id="team-add-btn">Add Tile</button>
-  </div>
-</div>
           </div>
           <div class="row">
             <span class="badge" id="tile-count">0/4 tiles</span>
@@ -37,6 +29,13 @@
         <div class="channels" id="channel-list">
           <!-- Cards injected by JS -->
         </div>
+      </div>
+
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;">
+          <div class="muted" style="margin-bottom:6px;">Teams</div>
+        </div>
+        <div class="channels" id="team-list"></div>
       </div>
 
       <div class="panel">

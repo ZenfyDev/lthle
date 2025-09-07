@@ -7,7 +7,7 @@ const QUICK_CHANNELS = [
   { name: "ABC",         url: "https://bg.kardna.net/uv.html#aHR0cHM6Ly9uZmx3ZWJjYXN0LmNvbS9saXZlL2JlbmdhbHMuaHRtbA==" }
 ];
 
-// Global team slugs for local /channels pages
+/* ---- Local team mapping & helpers (idempotent) ---- */
 window.TEAM_SLUGS = window.TEAM_SLUGS || {
   "Arizona Cardinals": "cardinals",
   "Atlanta Falcons": "falcons",
@@ -42,14 +42,40 @@ window.TEAM_SLUGS = window.TEAM_SLUGS || {
   "Washington Commanders": "commanders"
 };
 
-// Helper that scoreboard can call
 window.openTeamStream = function(teamName) {
   const slug = window.TEAM_SLUGS?.[teamName];
   if (slug) { addTile(`./channels/${slug}.html`, teamName); return true; }
   return false;
 };
 
+function renderTeamMenu(){
+  const el = document.getElementById("team-list");
+  if (!el) return;
+  el.innerHTML = "";
+  const items = Object.keys(window.TEAM_SLUGS).sort();
+  items.forEach(name => {
+    const slug = window.TEAM_SLUGS[name];
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h4>${name}</h4>
+      <div class="actions">
+        <button class="btn small primary">Open</button>
+        <button class="btn small">Add Tile</button>
+      </div>
+    `;
+    const [openBtn, addBtn] = card.querySelectorAll("button");
+    openBtn.addEventListener("click", () => addTile(`./channels/${slug}.html`, name));
+    addBtn.addEventListener("click", () => addTile(`./channels/${slug}.html`, name));
+    el.appendChild(card);
+  });
+}
 
+
+// Map ESPN team names to local /channels/ slugs
+// Helper for scoreboard to open a local team page
+// Map ESPN team names to local /channels/ slugs so scoreboard opens local pages
+// Helper used by api.js (scoreboard) to open a local team page instead of external
 // ---------- State ----------
 // Keep DOM nodes so we don't rebuild existing iframes (prevents reload/refresh when adding a tile)
 let tiles = []; // { id, url, label, elMain, elMV }
@@ -80,14 +106,13 @@ function renderChannels(){
       </div>
     `;
     const [openBtn, addBtn] = el.querySelectorAll("button");
-    openBtn.addEventListener("click", () => openWebsite(c.url));
+    openBtn.addEventListener("click", () => window.open(c.url, "_blank"));
     addBtn.addEventListener("click", () => addTile(c.url, c.name));
     channelList.appendChild(el);
   });
 }
 if (channelList) renderChannels();
-renderTeamDropdown();
-
+renderTeamMenu();
 // Public helper used by scoreboard/api.js
 window.openWebsite = function (url) {
   addTile(url, "Stream");
@@ -104,18 +129,17 @@ function createTileElement(id, url, label) {
   wrapper.innerHTML = `
     <div class="controls">
       <button class="icon" data-act="pop">Popout</button>
-      <button class="icon" data-act="full">Full</button>
       <button class="icon" data-act="close">Close</button>
     </div>
     <div class="label">${label}</div>
-    <iframe src="${url}" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+    <iframe src="${url}" allow="autoplay; picture-in-picture"></iframe>
   `;
   const acts = wrapper.querySelectorAll("[data-act]");
   acts.forEach(btn => {
     btn.addEventListener("click", () => {
       const a = btn.dataset.act;
       if (a === "close") removeTile(id);
-      if (a === "full") toggleFullscreen(wrapper);
+      
       if (a === "pop") window.open(url, "_blank");
     });
   });
@@ -185,32 +209,3 @@ document.addEventListener("keydown", (e) => {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 });
-
-function renderTeamDropdown(){
-  const sel = document.getElementById("team-select");
-  if (!sel) return;
-  sel.innerHTML = "";
-  const items = Object.keys(window.TEAM_SLUGS).sort();
-  items.forEach(name => {
-    const opt = document.createElement("option");
-    opt.value = window.TEAM_SLUGS[name];
-    opt.textContent = name;
-    sel.appendChild(opt);
-  });
-
-  const openBtn = document.getElementById("team-open-btn");
-  const addBtn  = document.getElementById("team-add-btn");
-  if (openBtn){
-    openBtn.onclick = () => {
-      const slug = sel.value;
-      if (slug) window.open(`./channels/${slug}.html`, "_blank");
-    };
-  }
-  if (addBtn){
-    addBtn.onclick = () => {
-      const slug = sel.value;
-      const name = Object.keys(window.TEAM_SLUGS).find(k => window.TEAM_SLUGS[k] === slug) || "Team";
-      if (slug) addTile(`./channels/${slug}.html`, name);
-    };
-  }
-}

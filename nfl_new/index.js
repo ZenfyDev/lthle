@@ -7,49 +7,6 @@ const QUICK_CHANNELS = [
   { name: "ABC",         url: "https://bg.kardna.net/uv.html#aHR0cHM6Ly9uZmx3ZWJjYXN0LmNvbS9saXZlL2JlbmdhbHMuaHRtbA==" }
 ];
 
-// Global team slugs for local /channels pages
-window.TEAM_SLUGS = window.TEAM_SLUGS || {
-  "Arizona Cardinals": "cardinals",
-  "Atlanta Falcons": "falcons",
-  "Baltimore Ravens": "ravens",
-  "Buffalo Bills": "bills",
-  "Carolina Panthers": "panthers",
-  "Chicago Bears": "bears",
-  "Cleveland Browns": "browns",
-  "Dallas Cowboys": "cowboys",
-  "Denver Broncos": "broncos",
-  "Detroit Lions": "lions",
-  "Green Bay Packers": "packers",
-  "Houston Texans": "texans",
-  "Indianapolis Colts": "colts",
-  "Jacksonville Jaguars": "jaguars",
-  "Kansas City Chiefs": "chiefs",
-  "Los Angeles Chargers": "chargers",
-  "Los Angeles Rams": "rams",
-  "Miami Dolphins": "dolphins",
-  "Minnesota Vikings": "vikings",
-  "New England Patriots": "patriots",
-  "New Orleans Saints": "saints",
-  "New York Giants": "giants",
-  "New York Jets": "jets",
-  "Las Vegas Raiders": "raiders",
-  "Philadelphia Eagles": "eagles",
-  "Pittsburgh Steelers": "steelers",
-  "San Francisco 49ers": "49ers",
-  "Seattle Seahawks": "seahawks",
-  "Tampa Bay Buccaneers": "buccaneers",
-  "Tennessee Titans": "titans",
-  "Washington Commanders": "commanders"
-};
-
-// Helper that scoreboard can call
-window.openTeamStream = function(teamName) {
-  const slug = window.TEAM_SLUGS?.[teamName];
-  if (slug) { addTile(`./channels/${slug}.html`, teamName); return true; }
-  return false;
-};
-
-
 // ---------- State ----------
 // Keep DOM nodes so we don't rebuild existing iframes (prevents reload/refresh when adding a tile)
 let tiles = []; // { id, url, label, elMain, elMV }
@@ -86,7 +43,6 @@ function renderChannels(){
   });
 }
 if (channelList) renderChannels();
-renderTeamDropdown();
 
 // Public helper used by scoreboard/api.js
 window.openWebsite = function (url) {
@@ -185,32 +141,3 @@ document.addEventListener("keydown", (e) => {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 });
-
-function renderTeamDropdown(){
-  const sel = document.getElementById("team-select");
-  if (!sel) return;
-  sel.innerHTML = "";
-  const items = Object.keys(window.TEAM_SLUGS).sort();
-  items.forEach(name => {
-    const opt = document.createElement("option");
-    opt.value = window.TEAM_SLUGS[name];
-    opt.textContent = name;
-    sel.appendChild(opt);
-  });
-
-  const openBtn = document.getElementById("team-open-btn");
-  const addBtn  = document.getElementById("team-add-btn");
-  if (openBtn){
-    openBtn.onclick = () => {
-      const slug = sel.value;
-      if (slug) window.open(`./channels/${slug}.html`, "_blank");
-    };
-  }
-  if (addBtn){
-    addBtn.onclick = () => {
-      const slug = sel.value;
-      const name = Object.keys(window.TEAM_SLUGS).find(k => window.TEAM_SLUGS[k] === slug) || "Team";
-      if (slug) addTile(`./channels/${slug}.html`, name);
-    };
-  }
-}

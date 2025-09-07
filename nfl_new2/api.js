@@ -1,47 +1,4 @@
-
-
 let gamesData = [];
-// Local team page slugs used for Watch -> /channels/{slug}.html
-const TEAM_SLUGS = {
-  "Cardinals": "cardinals",
-  "Falcons": "falcons",
-  "Ravens": "ravens",
-  "Bills": "bills",
-  "Panthers": "panthers",
-  "Bears": "bears",
-  "Browns": "browns",
-  "Cowboys": "cowboys",
-  "Broncos": "broncos",
-  "Lions": "lions",
-  "Packers": "packers",
-  "Texans": "texans",
-  "Colts": "colts",
-  "Jaguars": "jaguars",
-  "Chiefs": "chiefs",
-  "Chargers": "chargers",
-  "Rams": "rams",
-  "Dolphins": "dolphins",
-  "Vikings": "vikings",
-  "Patriots": "patriots",
-  "Saints": "saints",
-  "Giants": "giants",
-  "Jets": "jets",
-  "Raiders": "raiders",
-  "Eagles": "eagles",
-  "Steelers": "steelers",
-  "49ers": "49ers",
-  "Seahawks": "seahawks",
-  "Buccaneers": "buccaneers",
-  "Titans": "titans",
-  "Commanders": "commanders"
-};
-
-
-function setScoreboardMessage(html){
-  const container = document.getElementById('container');
-  if (container) container.innerHTML = html;
-}
-
 
 // Format YYYYMMDD
 function getFormattedDate() {
@@ -79,22 +36,42 @@ function handleTeamClick(teamName) {
 
 // Open stream for home team via nflwebcast under UV
 
+
 function openStreamFor(event){
   try{
     const comp = event.competitions?.[0];
     const team = comp?.competitors?.[0]?.team?.name || "";
-    const slug = (TEAM_SLUGS && TEAM_SLUGS[team]) ? TEAM_SLUGS[team] : null;
-
-    if (slug){
-      // Use local html player inside a tile
-      openWebsite(`./channels/${slug}.html`);
+    // Prefer local /channels/{team}.html
+    if (window.openTeamStream && team && window.openTeamStream(team)) {
       return;
     }
+    // Fallback to previous UV behavior
+    const lower = (team || "nflnetwork").toLowerCase().replace(/\s+/g, '');
+    const target = `https://nflwebcast.com/live/${lower}.html`;
+    const final  = "https://bg.kardna.net/uv.html#" + target;
+    openWebsite(final);
+  } catch (_e) {
+    openWebsite("https://bg.kardna.net/uv.html#aHR0cHM6Ly9uZmx3ZWJjYXN0LmNvbS9saXZlL25mbG5ldHdvcmsuaHRtbA==");
+  }
+}
 
-    // If no slug match, show a small hint instead of Kardna
-    alert("No local page found for: " + (team || "Unknown team") + ". Add a /channels/{team}.html page to use local.");
+    // Fallback to Kardna UV (previous behavior)
+    const lower = (team || "nflnetwork").toLowerCase().replace(/\s+/g, '');
+    const target = `https://nflwebcast.com/live/${lower}.html`;
+    const final = "https://bg.kardna.net/uv.html#" + target;
+    openWebsite(final);
   }catch(_e){
-    alert("Couldn't open local stream page for this matchup.");
+    openWebsite("https://bg.kardna.net/uv.html#aHR0cHM6Ly9uZmx3ZWJjYXN0LmNvbS9saXZlL25mbG5ldHdvcmsuaHRtbA==");
+  }
+}
+
+    // Fallback to your previous behavior (UV link)
+    const lower = (team || "nflnetwork").toLowerCase().replace(/\s+/g, '');
+    const target = `https://nflwebcast.com/live/${lower}.html`;
+    const final = "https://bg.kardna.net/uv.html#" + target;
+    openWebsite(final);
+  }catch(_e){
+    openWebsite("https://bg.kardna.net/uv.html#aHR0cHM6Ly9uZmx3ZWJjYXN0LmNvbS9saXZlL25mbG5ldHdvcmsuaHRtbA==");
   }
 }
 
@@ -115,7 +92,6 @@ function getLiveGameTime(event) {
 }
 
 function updateScoreboard() {
-  setScoreboardMessage('<div class="muted">Loading today\'s NFL scores…</div>');
   const currentDate = getFormattedDate();
   const apiUrl = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=${currentDate}`;
 
@@ -123,7 +99,6 @@ function updateScoreboard() {
     .then(r => r.json())
     .then(data => {
       gamesData = data.events || [];
-      if (!gamesData.length) { setScoreboardMessage('<div class="muted">No NFL games today.</div>'); return; }
 
       // Sort: most time left first, then scheduled, then finals
       gamesData.sort((a,b)=> timeLeftScore(b) - timeLeftScore(a));
@@ -202,16 +177,7 @@ function updateScoreboard() {
 
       startLiveUpdate();
     })
-    
-.catch(err => {
-  console.error('Error:', err);
-  setScoreboardMessage('<div class="muted">Scoreboard unavailable. The ESPN API might be blocked on this network. Try a refresh or a different network.</div>');
-
-const container = document.getElementById('container');
-      if (container) {
-        container.innerHTML = '<div class="muted">Scoreboard unavailable right now. If youre on a school or restricted network, the ESPN API might be blocked. Try a refresh or different network.</div>';
-      }
-    });
+    .catch(err => console.error('Error:', err));
 }
 
 function updateTimeLeft(){

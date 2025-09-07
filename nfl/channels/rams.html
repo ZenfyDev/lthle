@@ -1,0 +1,34 @@
+<meta name="robots" content="noindex">
+
+<script src="//cdn.jsdelivr.net/npm/@clappr/player@0.8/dist/clappr.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/@swarmcloud/hls/p2p-engine.min.js"></script>
+<div id="player"></div>
+<script>
+    var p2pConfig = {
+        // logLevel: 'debug',
+        live: true,
+        trackerZone: 'us',        // if using USA tracker
+        token: "5uTCOWnSg",
+        strictSegmentId: false,
+        // Other p2pConfig options provided by CDNBye
+    }
+    var player = new Clappr.Player(
+        {
+            source: 'https://live.webcastserver.online/hdstream/embed/111.m3u8',
+
+            height: '99.5%',
+            width: '100%',
+            autoPlay: false,
+            playInline: true,
+            plugins: [],
+            shakaConfiguration: {
+                preferredAudioLanguage: 'pt-BR',
+                streaming: {
+                    rebufferingGoal: 15
+                }
+            },
+            parentId: '#player'
+        });
+    p2pConfig.hlsjsInstance = player.core.getCurrentPlayback()?._hls;
+    var engine = new P2PEngineHls(p2pConfig);
+</script>
